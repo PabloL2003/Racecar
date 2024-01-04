@@ -3,6 +3,9 @@
 #include "Globals.h"
 #include "glmath.h"
 
+
+
+
 class ModuleCamera3D : public Module
 {
 public:
@@ -18,12 +21,15 @@ public:
 	void Move(const vec3 &Movement);
 	float* GetViewMatrix();
 
+	
 private:
 
 	void CalculateViewMatrix();
 
 public:
 	
+	Primitive cameraShape;
+
 	vec3 X, Y, Z, Position, Reference;
 
 private:

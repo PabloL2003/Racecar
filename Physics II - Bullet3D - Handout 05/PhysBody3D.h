@@ -2,6 +2,7 @@
 #define __PhysBody3D_H__
 
 #include "p2List.h"
+#include "Bullet/include/btBulletDynamicsCommon.h"
 
 class btRigidBody;
 class Module;
@@ -18,6 +19,20 @@ public:
 	void GetTransform(float* matrix) const;
 	void SetTransform(const float* matrix) const;
 	void SetPos(float x, float y, float z);
+	btVector3 GetPosition();
+
+	btVector3 GetForwardVector() const
+	{
+		if (body != nullptr)
+		{
+			btTransform transform = body->getWorldTransform();
+			btMatrix3x3 rotation = transform.getBasis();
+			return rotation.getColumn(2);  // Assuming the forward vector is the third column
+		}
+
+		// Return a default vector if the body is nullptr
+		return btVector3(0.0f, 0.0f, 1.0f);
+	}
 
 private:
 	btRigidBody* body = nullptr;

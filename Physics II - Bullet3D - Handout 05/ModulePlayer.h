@@ -21,6 +21,8 @@ public:
 
 public:
 
+	vec3 cameraPt;
+
 	PhysVehicle3D* vehicle;
 	float turn;
 	float acceleration;

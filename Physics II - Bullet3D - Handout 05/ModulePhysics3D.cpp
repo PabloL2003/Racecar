@@ -66,6 +66,8 @@ bool ModulePhysics3D::Start()
 		world->addRigidBody(body);
 	}
 
+	
+
 	return true;
 }
 
@@ -191,7 +193,7 @@ bool ModulePhysics3D::CleanUp()
 	return true;
 }
 
-// ---------------------------------------------------------
+// Creates a bt body associated to a OpenGL shape
 PhysBody3D* ModulePhysics3D::AddBody(const Sphere& sphere, float mass)
 {
 	btCollisionShape* colShape = new btSphereShape(sphere.radius);

@@ -4,6 +4,7 @@
 #include "Primitive.h"
 #include "PhysVehicle3D.h"
 #include "PhysBody3D.h"
+#include "ModuleCamera3D.h"
 
 ModulePlayer::ModulePlayer(Application* app, bool start_enabled) : Module(app, start_enabled), vehicle(NULL)
 {
@@ -110,10 +111,22 @@ bool ModulePlayer::CleanUp()
 	return true;
 }
 
+btVector3 MathVecToBt2(vec3 v) {
+
+	return btVector3(v.x, v.y, v.z);
+}
+
+
+vec3 btVecToMath2(btVector3 v) {
+
+	return vec3(v.x(), v.y(), v.z());
+}
+
 // Update: draw background
 update_status ModulePlayer::Update(float dt)
 {
 	turn = acceleration = brake = 0.0f;
+
 
 	if(App->input->GetKey(SDL_SCANCODE_UP) == KEY_REPEAT)
 	{
@@ -137,9 +150,17 @@ update_status ModulePlayer::Update(float dt)
 		brake = BRAKE_POWER;
 	}
 
+	
+	btVector3 vehicleForwardVector = vehicle->GetForwardVector();
+	btVector3 cameraPt = vehicle->GetPosition() - vehicleForwardVector * 10.0f + btVector3(0.0f, 5.0f, 0.0f);
+
+	App->camera->Look(btVecToMath2( cameraPt), btVecToMath2( vehicle->GetPosition()), true);
+
+
 	vehicle->ApplyEngineForce(acceleration);
 	vehicle->Turn(turn);
 	vehicle->Brake(brake);
+
 
 	vehicle->Render();
 
