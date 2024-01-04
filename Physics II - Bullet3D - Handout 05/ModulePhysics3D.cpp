@@ -4,6 +4,8 @@
 #include "PhysBody3D.h"
 #include "PhysVehicle3D.h"
 #include "Primitive.h"
+#include "coin.h"
+
 
 #ifdef _DEBUG
 	#pragma comment (lib, "Bullet/libx86/BulletDynamics_debug.lib")
@@ -89,6 +91,15 @@ update_status ModulePhysics3D::PreUpdate(float dt)
 			PhysBody3D* pbodyA = (PhysBody3D*)obA->getUserPointer();
 			PhysBody3D* pbodyB = (PhysBody3D*)obB->getUserPointer();
 
+			if ( pbodyA && pbodyA->pendingToDelete == true) {
+				world->removeRigidBody(pbodyA->body);
+				
+			}
+			if (pbodyB && pbodyB->pendingToDelete == true) {
+				world->removeRigidBody(pbodyB->body);
+				
+			}
+
 			if(pbodyA && pbodyB)
 			{
 				p2List_item<Module*>* item = pbodyA->collision_listeners.getFirst();
@@ -137,6 +148,12 @@ update_status ModulePhysics3D::Update(float dt)
 			AddBody(s)->Push(-(App->camera->Z.x * force), -(App->camera->Z.y * force), -(App->camera->Z.z * force));
 		}
 	}
+
+
+	// Iterate all bodies
+
+
+
 
 	return UPDATE_CONTINUE;
 }
@@ -267,6 +284,34 @@ PhysBody3D* ModulePhysics3D::AddBody(const Cylinder& cylinder, float mass)
 
 	btRigidBody* body = new btRigidBody(rbInfo);
 	PhysBody3D* pbody = new PhysBody3D(body);
+
+	body->setUserPointer(pbody);
+	world->addRigidBody(body);
+	bodies.add(pbody);
+
+	return pbody;
+}
+
+Coin* ModulePhysics3D:: AddCoin(const Cylinder& cylinder, float mass) {
+
+	btCollisionShape* colShape = new btCylinderShapeX(btVector3(cylinder.height * 0.5f, cylinder.radius, 0.0f));
+	shapes.add(colShape);
+
+	btTransform startTransform;
+	startTransform.setFromOpenGLMatrix(&cylinder.transform);
+
+	btVector3 localInertia(0, 0, 0);
+	if (mass != 0.f)
+		colShape->calculateLocalInertia(mass, localInertia);
+
+	btDefaultMotionState* myMotionState = new btDefaultMotionState(startTransform);
+	motions.add(myMotionState);
+	btRigidBody::btRigidBodyConstructionInfo rbInfo(mass, myMotionState, colShape, localInertia);
+
+	btRigidBody* body = new btRigidBody(rbInfo);
+	Coin* pbody = new Coin(body);
+	pbody->Awake();
+	
 
 	body->setUserPointer(pbody);
 	world->addRigidBody(body);

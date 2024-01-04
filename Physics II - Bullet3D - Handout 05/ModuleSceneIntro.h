@@ -3,6 +3,8 @@
 #include "p2DynArray.h"
 #include "Globals.h"
 #include "Primitive.h"
+#include "coin.h"
+#include "p2List.h"
 
 #define MAX_SNAKE 2
 
@@ -30,6 +32,8 @@ public:
 	Sphere s_snake2[MAX_SNAKE];
 	*/
 
+	uint coinFx;
+
 	PhysBody3D* pb_chassis;
 	Cube p_chassis;
 
@@ -43,4 +47,7 @@ public:
 	PhysMotor3D* right_wheel;
 
 	Cube box;
+
+	p2List<Coin*> myCoins;
+	
 };

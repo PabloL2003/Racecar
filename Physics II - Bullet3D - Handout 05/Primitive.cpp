@@ -4,6 +4,7 @@
 #include <gl/GLU.h>
 #include "Primitive.h"
 #include "glut/glut.h"
+#include "PhysBody3D.h"
 
 #pragma comment (lib, "glut/glut32.lib")
 
@@ -16,7 +17,20 @@ PrimitiveTypes Primitive::GetType() const
 {
 	return type;
 }
+void Primitive::Update(PhysBody3D* pA)
+{
+	//TODO 5: Set the primitive position and rotation to the PhysBody position and rotation
 
+	btVector3 bv = pA->GetPosition();
+
+	
+
+	this->SetPos(bv.x(), bv.y(), bv.z());
+	// how do i link the rotation ??
+
+	this->Render();
+
+}
 // ------------------------------------------------------------
 void Primitive::Render() const
 {

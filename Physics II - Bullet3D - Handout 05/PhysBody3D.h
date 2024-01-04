@@ -12,6 +12,10 @@ struct PhysBody3D
 {
 	friend class ModulePhysics3D;
 public:
+
+	bool is_sensor = false;
+	bool pendingToDelete = false;
+
 	PhysBody3D(btRigidBody* body);
 	~PhysBody3D();
 
@@ -34,7 +38,19 @@ public:
 		return btVector3(0.0f, 0.0f, 1.0f);
 	}
 
-private:
+	void PhysBody3D::SetAsSensor(bool is_sensor)
+	{
+		if (this->is_sensor != is_sensor)
+		{
+			this->is_sensor = is_sensor;
+			if (is_sensor == true)
+				body->setCollisionFlags(body->getCollisionFlags() | btCollisionObject::CF_NO_CONTACT_RESPONSE);
+			else
+				body->setCollisionFlags(body->getCollisionFlags() & ~btCollisionObject::CF_NO_CONTACT_RESPONSE);
+		}
+	}
+
+public:
 	btRigidBody* body = nullptr;
 
 public:
