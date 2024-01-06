@@ -34,52 +34,70 @@ void Primitive::Update(PhysBody3D* pA)
 // ------------------------------------------------------------
 void Primitive::Render() const
 {
+	// Save the current scissor box
+	GLint scissor[4];
+	glGetIntegerv(GL_SCISSOR_BOX, scissor);
+
+	// If this primitive is acting as a mask, render it first to set up the stencil buffer
+	if (maskPrimitive)
+	{
+		glEnable(GL_STENCIL_TEST);
+		glClear(GL_STENCIL_BUFFER_BIT);
+		glStencilFunc(GL_ALWAYS, 1, 1);
+		glStencilOp(GL_KEEP, GL_KEEP, GL_REPLACE);
+
+		// Render the mask primitive into the stencil buffer
+		maskPrimitive->Render();
+
+		// Disable writing to the color buffer and depth buffer
+		glColorMask(GL_FALSE, GL_FALSE, GL_FALSE, GL_FALSE);
+		glDepthMask(GL_FALSE);
+	}
+
+	// Render the current primitive (e.g., a cylinder)
+	glEnable(GL_SCISSOR_TEST);
+	glScissor(clippingRegionX, clippingRegionY, clippingRegionWidth, clippingRegionHeight);
+
 	glPushMatrix();
 	glMultMatrixf(transform.M);
 
-	if(axis == true)
+	if (axis == true)
 	{
 		// Draw Axis Grid
 		glLineWidth(2.0f);
-
 		glBegin(GL_LINES);
-
-		glColor4f(1.0f, 0.0f, 0.0f, 1.0f);
-
-		glVertex3f(0.0f, 0.0f, 0.0f); glVertex3f(1.0f, 0.0f, 0.0f);
-		glVertex3f(1.0f, 0.1f, 0.0f); glVertex3f(1.1f, -0.1f, 0.0f);
-		glVertex3f(1.1f, 0.1f, 0.0f); glVertex3f(1.0f, -0.1f, 0.0f);
-
-		glColor4f(0.0f, 1.0f, 0.0f, 1.0f);
-
-		glVertex3f(0.0f, 0.0f, 0.0f); glVertex3f(0.0f, 1.0f, 0.0f);
-		glVertex3f(-0.05f, 1.25f, 0.0f); glVertex3f(0.0f, 1.15f, 0.0f);
-		glVertex3f(0.05f, 1.25f, 0.0f); glVertex3f(0.0f, 1.15f, 0.0f);
-		glVertex3f(0.0f, 1.15f, 0.0f); glVertex3f(0.0f, 1.05f, 0.0f);
-
-		glColor4f(0.0f, 0.0f, 1.0f, 1.0f);
-
-		glVertex3f(0.0f, 0.0f, 0.0f); glVertex3f(0.0f, 0.0f, 1.0f);
-		glVertex3f(-0.05f, 0.1f, 1.05f); glVertex3f(0.05f, 0.1f, 1.05f);
-		glVertex3f(0.05f, 0.1f, 1.05f); glVertex3f(-0.05f, -0.1f, 1.05f);
-		glVertex3f(-0.05f, -0.1f, 1.05f); glVertex3f(0.05f, -0.1f, 1.05f);
-
+		// ... (Your existing axis drawing code)
 		glEnd();
-
 		glLineWidth(1.0f);
 	}
 
+	// Restore writing to the color buffer and depth buffer
+	glColorMask(GL_TRUE, GL_TRUE, GL_TRUE, GL_TRUE);
+	glDepthMask(GL_TRUE);
+
+	// Set color before rendering the current primitive
 	glColor3f(color.r, color.g, color.b);
 
-	if(wire)
+	if (wire)
 		glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 	else
 		glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 
+	// Enable stencil test to perform subtraction
+	glStencilFunc(GL_EQUAL, 1, 1);
+	glStencilOp(GL_KEEP, GL_KEEP, GL_KEEP);
+
+	// Render the current primitive (e.g., a cylinder) within the scissor and stencil region
 	InnerRender();
 
 	glPopMatrix();
+
+	// Restore the previous scissor box and disable stencil test
+	glScissor(scissor[0], scissor[1], scissor[2], scissor[3]);
+	glDisable(GL_SCISSOR_TEST);
+	glDisable(GL_STENCIL_TEST);
 }
+
 
 // ------------------------------------------------------------
 void Primitive::InnerRender() const
@@ -94,6 +112,16 @@ void Primitive::InnerRender() const
 
 	glPointSize(1.0f);
 }
+
+//void Primitive::SetClippingRegion(float x, float y, float h, float w) {
+//
+//	clippingRegionX = x;
+//	clippingRegionY = y;
+//	clippingRegionHeight = h;
+//	clippingRegionWidth = w;
+//
+//	maskPrimitive = new Cube(clippingRegionWidth, clippingRegionHeight,clippingRegionWidth);
+//}
 
 // ------------------------------------------------------------
 void Primitive::SetPos(float x, float y, float z)

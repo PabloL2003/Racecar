@@ -1,8 +1,2 @@
-﻿  ModulePlayer.cpp
-C:\Users\marco\Desktop\Development game\Racecar\Physics II - Bullet3D - Handout 05\ModulePlayer.cpp(133,35): warning C4244: '=': conversion from 'int' to 'float', possible loss of data
-  ModuleSceneIntro.cpp
-C:\Users\marco\Desktop\Development game\Racecar\Physics II - Bullet3D - Handout 05\ModuleSceneIntro.cpp(35,26): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
-C:\Users\marco\Desktop\Development game\Racecar\Physics II - Bullet3D - Handout 05\ModuleSceneIntro.cpp(35,14): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
-  ModuleWindow.cpp
-  Generating Code...
+﻿  ModulePhysics3D.cpp
   3D Physics.vcxproj -> C:\Users\marco\Desktop\Development game\Racecar\Physics II - Bullet3D - Handout 05\Debug\3D Physics - class5.exe

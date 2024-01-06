@@ -5,6 +5,7 @@
 #include "PhysVehicle3D.h"
 #include "Primitive.h"
 #include "coin.h"
+#include "pipe.h"
 
 
 #ifdef _DEBUG
@@ -312,6 +313,38 @@ Coin* ModulePhysics3D:: AddCoin(const Cylinder& cylinder, float mass) {
 	Coin* pbody = new Coin(body);
 	pbody->Awake();
 	
+
+	body->setUserPointer(pbody);
+	world->addRigidBody(body);
+	bodies.add(pbody);
+
+	return pbody;
+}
+
+Pipe* ModulePhysics3D::AddPipe(const Cylinder& cylinder, float mass) {
+
+	btCollisionShape* colShape = new btCylinderShapeX(btVector3(cylinder.height * 0.5f, cylinder.radius, 0.0f));
+	shapes.add(colShape);
+
+	btTransform startTransform;
+	startTransform.setFromOpenGLMatrix(&cylinder.transform);
+
+	btVector3 localInertia(0, 0, 0);
+	if (mass != 0.f)
+		colShape->calculateLocalInertia(mass, localInertia);
+
+	btDefaultMotionState* myMotionState = new btDefaultMotionState(startTransform);
+	motions.add(myMotionState);
+	btRigidBody::btRigidBodyConstructionInfo rbInfo(mass, myMotionState, colShape, localInertia);
+
+	// Set the restitution (bounciness) here
+	rbInfo.m_restitution = 10000;
+
+
+	btRigidBody* body = new btRigidBody(rbInfo);
+	Pipe* pbody = new Pipe(body);
+	pbody->Awake();
+
 
 	body->setUserPointer(pbody);
 	world->addRigidBody(body);

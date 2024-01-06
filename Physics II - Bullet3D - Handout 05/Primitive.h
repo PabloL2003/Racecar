@@ -30,6 +30,12 @@ public:
 	PrimitiveTypes	GetType() const;
 	vec3 GetPos();
 
+	float clippingRegionX, clippingRegionY, clippingRegionWidth, clippingRegionHeight;
+
+	Primitive* maskPrimitive = nullptr;
+
+
+
 public:
 	
 	Color color;

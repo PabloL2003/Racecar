@@ -4,12 +4,15 @@
 #include "Globals.h"
 #include "Primitive.h"
 #include "coin.h"
+#include "pipe.h"
 #include "p2List.h"
 
 #define MAX_SNAKE 2
 
 struct PhysBody3D;
 struct PhysMotor3D;
+
+
 
 class ModuleSceneIntro : public Module
 {
@@ -32,6 +35,10 @@ public:
 	Sphere s_snake2[MAX_SNAKE];
 	*/
 
+	Cube* cub1;
+	Cube* cub2;
+
+
 	uint coinFx;
 
 	PhysBody3D* pb_chassis;
@@ -48,6 +55,8 @@ public:
 
 	Cube box;
 
+	// maybe this should all be one PhysicBody3D list ?
 	p2List<Coin*> myCoins;
+	p2List<Pipe*> myPipes;
 	
 };

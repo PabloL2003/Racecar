@@ -5,6 +5,9 @@
 #include "PhysBody3D.h"
 #include "ModuleAudio.h"
 #include "ModulePlayer.h"
+#include "ModulePhysics3D.h"
+#include "pipe.h"
+#include "p2List.h"
 
 ModuleSceneIntro::ModuleSceneIntro(Application* app, bool start_enabled) : Module(app, start_enabled)
 {
@@ -37,6 +40,26 @@ bool ModuleSceneIntro::Start()
 		myCoins.add(c);
 		c->Shape->color = Color(1, 1, 0, 1);
 		c->collision_listeners.add(this);
+
+	}
+
+	cub1 = new Cube(10, 10, 10);
+	cub1->SetPos(0, 0, 2);
+	cub2 = new Cube(5, 5, 5);
+	cub2->SetPos(0, 1, 2);
+
+	
+	for (int i = 0; i < 1; ++i) {
+
+		Cylinder c2 = Cylinder(2, 4);
+		c2.SetPos(i * -4, 0, 20);
+		Pipe* p = App->physics->AddPipe(c2,50000);
+		myPipes.add(p);
+
+
+		p->Shape2->SetPos(i*-4 + 2, 2, 20);
+
+		p->collision_listeners.add(this);
 
 	}
 
@@ -95,7 +118,22 @@ update_status ModuleSceneIntro::Update(float dt)
 	}
 
 
-	
+
+	p2List_item<Pipe*>* currentItemP = myPipes.getFirst();
+
+	while (currentItemP != NULL) {
+
+		
+		  //  currentItemP->data->Shape2->SetPos(currentItemP->data->Shape->GetPos().x, currentItemP->data->Shape->GetPos().y + 4, currentItemP->data->Shape->GetPos().z);
+		    currentItemP->data->Update();
+
+
+
+		
+		
+			currentItemP = currentItemP->next;
+		
+	}
 
 	return UPDATE_CONTINUE;
 }
