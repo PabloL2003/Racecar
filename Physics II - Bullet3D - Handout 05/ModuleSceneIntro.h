@@ -1,3 +1,4 @@
+
 #pragma once
 #include "Module.h"
 #include "p2DynArray.h"
@@ -22,6 +23,7 @@ public:
 	bool CleanUp();
 
 	void OnCollision(PhysBody3D* body1, PhysBody3D* body2);
+	void ModuleSceneIntro::addCube(vec3 pos, vec3 size, Color rgb, float rtx, float rty, float rtz);
 
 public:
 	/*
@@ -49,5 +51,8 @@ public:
 	Cube box;
 
 	p2List<Coin*> myCoins;
-	
+
+	p2List<Cube> Borderblocks;
 };
+
+
