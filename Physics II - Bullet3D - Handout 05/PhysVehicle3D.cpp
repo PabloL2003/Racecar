@@ -23,33 +23,45 @@ PhysVehicle3D::~PhysVehicle3D()
 // ----------------------------------------------------------------------------
 void PhysVehicle3D::Render()
 {
-	Cylinder wheel;
+    // Render kart body
+    Cube mainBody(info.chassis_size.x, info.chassis_size.y/4, info.chassis_size.z);
+    vehicle->getChassisWorldTransform().getOpenGLMatrix(&mainBody.transform);
+    btQuaternion q = vehicle->getChassisWorldTransform().getRotation();
+    btVector3 offset(info.chassis_offset.x, info.chassis_offset.y/4, info.chassis_offset.z);
+    offset = offset.rotate(q.getAxis(), q.getAngle());
 
-	wheel.color = Blue;
+    mainBody.transform.M[12] += offset.getX();
+    mainBody.transform.M[13] += offset.getY();
+    mainBody.transform.M[14] += offset.getZ();
 
-	for(int i = 0; i < vehicle->getNumWheels(); ++i)
-	{
-		wheel.radius = info.wheels[0].radius;
-		wheel.height = info.wheels[0].width;
+    mainBody.color = Red; // Set the color of the body
+    mainBody.Render();
 
-		vehicle->updateWheelTransform(i);
-		vehicle->getWheelInfo(i).m_worldTransform.getOpenGLMatrix(&wheel.transform);
+    // Render additional cubes to form the kart body
+    Cube frontSpoiler(info.chassis_size.x * 0.8f, info.chassis_size.y * 0.1f, info.chassis_size.z * 0.2f);
+    frontSpoiler.color = Red;
+    frontSpoiler.SetPos(mainBody.transform.M[12], mainBody.transform.M[13] + info.chassis_size.y * 0.5f, mainBody.transform.M[14] + info.chassis_size.z * 0.5f);
+    frontSpoiler.Render();
 
-		wheel.Render();
-	}
+    Cube rearSpoiler(info.chassis_size.x * 0.8f, info.chassis_size.y * 0.1f, info.chassis_size.z * 0.2f);
+    rearSpoiler.color = Red;
+    rearSpoiler.SetPos(mainBody.transform.M[12], mainBody.transform.M[13] + info.chassis_size.y * 0.5f, mainBody.transform.M[14] - info.chassis_size.z * 0.5f);
+    rearSpoiler.Render();
 
-	Cube chassis(info.chassis_size.x, info.chassis_size.y, info.chassis_size.z);
-	vehicle->getChassisWorldTransform().getOpenGLMatrix(&chassis.transform);
-	btQuaternion q = vehicle->getChassisWorldTransform().getRotation();
-	btVector3 offset(info.chassis_offset.x, info.chassis_offset.y, info.chassis_offset.z);
-	offset = offset.rotate(q.getAxis(), q.getAngle());
+    // Render kart wheels
+    Cylinder wheel;
+    wheel.color = Blue;
 
-	chassis.transform.M[12] += offset.getX();
-	chassis.transform.M[13] += offset.getY();
-	chassis.transform.M[14] += offset.getZ();
+    for (int i = 0; i < vehicle->getNumWheels(); ++i)
+    {
+        wheel.radius = info.wheels[0].radius;
+        wheel.height = info.wheels[0].width;
 
+        vehicle->updateWheelTransform(i);
+        vehicle->getWheelInfo(i).m_worldTransform.getOpenGLMatrix(&wheel.transform);
 
-	chassis.Render();
+        wheel.Render();
+    }
 }
 
 // ----------------------------------------------------------------------------
