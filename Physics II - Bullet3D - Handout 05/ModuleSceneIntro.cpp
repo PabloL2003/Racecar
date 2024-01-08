@@ -25,10 +25,10 @@ void ModuleSceneIntro::addCube(vec3 pos, vec3 size, Color rgb, float rtx, float 
 		cube.SetRotation(rtx, { 1,0,0 });
 
 	if (rty != 0)
-		cube.SetRotation(rtx, { 1,0,0 });
+		cube.SetRotation(rty, { 0,1,0 });
 
 	if (rtz != 0)
-		cube.SetRotation(rtx, { 1,0,0 });
+		cube.SetRotation(rtz, { 0,0,1 });
 
 
 	App->physics->AddBody(cube, 0);
@@ -73,11 +73,6 @@ bool ModuleSceneIntro::Start()
 
 
 
-
-
-
-
-
 	//long wall//
 	addCube({ 100,2,-200 }, { 6,6,50 }, { 0,0,255 }, 0, 0, 0);
 	addCube({ 100,2,-150 }, { 6,6,50 }, { 255,0,0 }, 0, 0, 0);
@@ -87,7 +82,7 @@ bool ModuleSceneIntro::Start()
 	addCube({ 100,2,50 }, { 6,6,50 }, { 0,255,0 }, 0, 0, 0);
 	addCube({ 100,2,100 }, { 6,6,50 }, { 0,0,255 }, 0, 0, 0);
 	addCube({ 100,2,150 }, { 6,6,50 }, { 255,0,0 }, 0, 0, 0);
-	addCube({ 100,2,187}, { 6,6,25 }, { 0,255,0 }, 0, 0, 0);
+	addCube({ 100,2,187 }, { 6,6,25 }, { 0,255,0 }, 0, 0, 0);
 
 
 	//long wall//
@@ -101,6 +96,27 @@ bool ModuleSceneIntro::Start()
 	addCube({ -100,2,100 }, { 6,6,50 }, { 0,0,255 }, 0, 0, 0);
 	addCube({ -100,2,150 }, { 6,6,50 }, { 255,0,0 }, 0, 0, 0);
 	addCube({ -100,2,187 }, { 6,6,25 }, { 0,255,0 }, 0, 0, 0);
+
+
+
+	//carretera//
+	//inicio//
+	addCube({ -85,0,-85 }, { 20,0.3f,20 }, { 1,1,1 }, 0, 0, 0);
+
+	//recta//
+	addCube({ -85,0,0 }, { 6,0.3f,160 }, { 1,1,1 }, 0, 0, 0);
+
+	//primera curba//
+	addCube({ -84,0,84 }, { 6,0.3f,10 }, { 1,1,1 }, 0, 15, 0);
+	addCube({ -81,0,91 }, { 6,0.3f,10 }, { 1,1,1 }, 0, 30, 0);
+	addCube({ -76,0,96 }, { 6,0.3f,10 }, { 1,1,1 }, 0, 60, 0);
+	addCube({ -66,0,98 }, { 6,0.3f,15 }, { 1,1,1 }, 0, 90, 0);
+	addCube({ -56,0,96 }, { 6,0.3f,10 }, { 1,1,1 }, 0, 110, 0);
+
+	//rampa//
+	addCube({ 0,0,0 }, { 6,0.3f,60 }, { 1,1,1 }, 0, 0, 0);
+	addCube({ 0,0,0 }, { 6,0.3f,60 }, { 1,1,1 }, 20, 0, 0);
+
 
 	for (int i = 0; i < 20; ++i) {
 
