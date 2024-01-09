@@ -33,7 +33,7 @@ public:
 	PhysBody3D* AddBody(const Cylinder& cylinder, float mass = 1.0f);
 	PhysVehicle3D* AddVehicle(const VehicleInfo& info);
 
-	vec3 ApplyAerodynamics(PhysBody3D* body, float deltaTime);
+	btVector3 ApplyAerodynamics(PhysBody3D* body, float deltaTime);
 
 	Coin* AddCoin(const Cylinder& cylinder, float mass = 1.0f);
 

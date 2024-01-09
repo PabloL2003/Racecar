@@ -76,52 +76,44 @@ bool ModulePhysics3D::Start()
 	return true;
 }
 
-vec3 ModulePhysics3D::ApplyAerodynamics(PhysBody3D* body, float deltaTime)
+btVector3 ModulePhysics3D::ApplyAerodynamics(PhysBody3D* body, float deltaTime)
 {
 	//The formula for aerodynamic drag is: Drag = 0.5 * airDensity * velocity^2 * dragCoefficient * area
 	//airDensity = 1.225 (at sea level and at 15 °C), and area = 1 for simplicity
-	ldsvhakvbasv ñk
-	 float dragCoefficient = 0.47f*100;
-	float airDensity = 1.225f*100;
+	
+	float dragCoefficient = 0.47f;
+	float airDensity = 1.225f;
 	float area = 2.0f;
-	float Vsquared = pow(body->body->getLinearVelocity().x(), 2) + pow(body->body->getLinearVelocity().y(), 2) + pow(body->body->getLinearVelocity().z(), 2);
-	float dragForce = 0.5f * airDensity * Vsquared * dragCoefficient * area;
-	/*float dragForce = 0.5f * airDensity * body->velocity.LengthSquared() * body->dragCoefficient * area;*/
 
-	btVector3 linearVelocity = body->body->getLinearVelocity();
+	
+	float Vsquared = body->body->getLinearVelocity().length2();
+	float magnitude = sqrt(Vsquared);
 
-	// Calculate the magnitude (length) of the linear velocity vector
-	btScalar magnitude = linearVelocity.length();
-
-	vec3 dragForceVec = vec3(0, 0, 0);
+	btVector3 dragForceVec = btVector3(0, 0, 0);
 
 	// Check if the magnitude is greater than a small threshold to avoid division by zero
-	if (magnitude > 1e-6) // You can adjust the threshold based on your needs
+	if (magnitude > 1e-6)
 	{
 		// Normalize the linear velocity manually
-		btVector3 normalizedLinearVelocity = linearVelocity / magnitude;
-		btVector3 drag = body->body->getLinearVelocity().normalized();
-		dragForceVec = vec3(drag.x(), drag.y(), drag.z());
-		//body->velocity.Normalize();
-		dragForceVec.x *= -1;
-		dragForceVec.y *= -1;
-		dragForceVec.z *= -1;
+		btVector3 normalizedLinearVelocity = body->body->getLinearVelocity() / magnitude;
 
-		
-		// 'normalizedLinearVelocity' now contains the normalized linear velocity of the rigid body
+		// Calculate the drag force vector based on the normalized velocity
+		dragForceVec = -0.5f * airDensity * Vsquared * dragCoefficient * area * normalizedLinearVelocity;
 	}
+
 	return dragForceVec;
-	
 }
+	
+
 
 // ---------------------------------------------------------
 update_status ModulePhysics3D::PreUpdate(float dt)
 {
-	vec3 dragF = ApplyAerodynamics(App->player->vehicle, dt);
-	btVector3 DragVec = btVector3(dragF.x, dragF.y, dragF.z); 
-	App->player->myDrag = DragVec;
+	btVector3 dragF = ApplyAerodynamics(App->player->vehicle, dt);
+	
+	App->player->myDrag = dragF;
 
-	App->player->vehicle->body->applyCentralForce(DragVec);
+	App->player->vehicle->body->applyCentralForce(dragF);
 
 	world->stepSimulation(dt, 15);
 

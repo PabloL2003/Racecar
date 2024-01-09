@@ -12,7 +12,7 @@ struct PhysBody3D
 {
 	friend class ModulePhysics3D;
 public:
-
+	
 	bool is_sensor = false;
 	bool pendingToDelete = false;
 
