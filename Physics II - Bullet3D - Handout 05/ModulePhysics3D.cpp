@@ -80,6 +80,7 @@ vec3 ModulePhysics3D::ApplyAerodynamics(PhysBody3D* body, float deltaTime)
 {
 	//The formula for aerodynamic drag is: Drag = 0.5 * airDensity * velocity^2 * dragCoefficient * area
 	//airDensity = 1.225 (at sea level and at 15 °C), and area = 1 for simplicity
+	ldsvhakvbasv ñk
 	 float dragCoefficient = 0.47f*100;
 	float airDensity = 1.225f*100;
 	float area = 2.0f;
