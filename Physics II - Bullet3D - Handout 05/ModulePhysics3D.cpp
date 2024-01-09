@@ -91,13 +91,13 @@ btVector3 ModulePhysics3D::ApplyAerodynamics(PhysBody3D* body, float deltaTime)
 
 	btVector3 dragForceVec = btVector3(0, 0, 0);
 
-	// Check if the magnitude is greater than a small threshold to avoid division by zero
+	/*Avoid dividing by 0*/
 	if (magnitude > 1e-6)
 	{
 		// Normalize the linear velocity manually
 		btVector3 normalizedLinearVelocity = body->body->getLinearVelocity() / magnitude;
 
-		// Calculate the drag force vector based on the normalized velocity
+		// Calculate the drag force vector based on the normalized velocity, set to opposite direction
 		dragForceVec = -0.5f * airDensity * Vsquared * dragCoefficient * area * normalizedLinearVelocity;
 	}
 
@@ -441,6 +441,8 @@ void ModulePhysics3D::AddConstraintHinge(PhysBody3D& bodyA, PhysBody3D& bodyB, c
 		btVector3(anchorB.x, anchorB.y, anchorB.z),
 		btVector3(axisA.x, axisA.y, axisA.z), 
 		btVector3(axisB.x, axisB.y, axisB.z));
+
+	hinge->enableAngularMotor(true, 2, 15);
 
 	world->addConstraint(hinge, disable_collision);
 	constraints.add(hinge);

@@ -23,6 +23,8 @@ public:
 
 public:
 
+	PhysBody3D* object = nullptr;
+
 	int coins = 0;
 	int extraAcceleration = 0;
 	vec3 cameraPt;

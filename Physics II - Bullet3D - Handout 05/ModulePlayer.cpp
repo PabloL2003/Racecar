@@ -99,6 +99,19 @@ bool ModulePlayer::Start()
 
 	vehicle = App->physics->AddVehicle(car);
 	vehicle->SetPos(0, 12, 10);
+
+	float orbitDistance = 7.0f;
+
+	// Set the initial position of the object at the desired distance
+	object = App->physics->AddBody(Cube(1, 1, 1), 1);
+	object->SetPos(0, 20, 10 + orbitDistance); // Adjust the Z-coordinate based on the desired distance
+
+
+
+	// Add a hinge constraint with the anchor points adjusted for the orbit
+	App->physics->AddConstraintHinge(*vehicle, *object, vec3(0, 2, 0), vec3(0, 0, -orbitDistance), vec3(0, 1, 0), vec3(0, 1, 0), true);
+
+	object->SetAsSensor(true);
 	
 	return true;
 }
