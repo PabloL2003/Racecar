@@ -147,7 +147,8 @@ update_status ModulePlayer::Update(float dt)
 
 	if(App->input->GetKey(SDL_SCANCODE_DOWN) == KEY_REPEAT)
 	{
-		brake = BRAKE_POWER;
+		/*brake = BRAKE_POWER;*/
+		acceleration += -MAX_ACCELERATION;
 	}
 
 	
@@ -160,7 +161,7 @@ update_status ModulePlayer::Update(float dt)
 	vehicle->ApplyEngineForce(acceleration);
 	vehicle->Turn(turn);
 	vehicle->Brake(brake);
-
+	
 
 	vehicle->Render();
 
@@ -175,6 +176,5 @@ update_status ModulePlayer::Update(float dt)
 void ModulePlayer::OnCollision(PhysBody3D* body1, PhysBody3D* body2) {
 
 	LOG("Collision");
-
 
 };
