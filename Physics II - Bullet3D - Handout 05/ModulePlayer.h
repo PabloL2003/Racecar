@@ -27,6 +27,8 @@ public:
 	int extraAcceleration = 0;
 	vec3 cameraPt;
 
+	btVector3 myDrag;
+
 	PhysVehicle3D* vehicle;
 	float turn;
 	float acceleration;

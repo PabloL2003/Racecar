@@ -5,6 +5,7 @@
 #include "PhysVehicle3D.h"
 #include "Primitive.h"
 #include "coin.h"
+#include "ModuleCamera3D.h"
 
 
 #ifdef _DEBUG
@@ -16,6 +17,8 @@
 	#pragma comment (lib, "Bullet/libx86/BulletCollision.lib")
 	#pragma comment (lib, "Bullet/libx86/LinearMath.lib")
 #endif
+
+
 
 ModulePhysics3D::ModulePhysics3D(Application* app, bool start_enabled) : Module(app, start_enabled)
 {
@@ -77,9 +80,9 @@ vec3 ModulePhysics3D::ApplyAerodynamics(PhysBody3D* body, float deltaTime)
 {
 	//The formula for aerodynamic drag is: Drag = 0.5 * airDensity * velocity^2 * dragCoefficient * area
 	//airDensity = 1.225 (at sea level and at 15 °C), and area = 1 for simplicity
-	 float dragCoefficient = 0.47f;
-	float airDensity = 1.225f;
-	float area = 1.0f;
+	 float dragCoefficient = 0.47f*100;
+	float airDensity = 1.225f*100;
+	float area = 2.0f;
 	float Vsquared = pow(body->body->getLinearVelocity().x(), 2) + pow(body->body->getLinearVelocity().y(), 2) + pow(body->body->getLinearVelocity().z(), 2);
 	float dragForce = 0.5f * airDensity * Vsquared * dragCoefficient * area;
 	/*float dragForce = 0.5f * airDensity * body->velocity.LengthSquared() * body->dragCoefficient * area;*/
@@ -89,32 +92,35 @@ vec3 ModulePhysics3D::ApplyAerodynamics(PhysBody3D* body, float deltaTime)
 	// Calculate the magnitude (length) of the linear velocity vector
 	btScalar magnitude = linearVelocity.length();
 
+	vec3 dragForceVec = vec3(0, 0, 0);
+
 	// Check if the magnitude is greater than a small threshold to avoid division by zero
 	if (magnitude > 1e-6) // You can adjust the threshold based on your needs
 	{
 		// Normalize the linear velocity manually
 		btVector3 normalizedLinearVelocity = linearVelocity / magnitude;
+		btVector3 drag = body->body->getLinearVelocity().normalized();
+		dragForceVec = vec3(drag.x(), drag.y(), drag.z());
+		//body->velocity.Normalize();
+		dragForceVec.x *= -1;
+		dragForceVec.y *= -1;
+		dragForceVec.z *= -1;
 
+		
 		// 'normalizedLinearVelocity' now contains the normalized linear velocity of the rigid body
 	}
-
-	btVector3 drag = body->body->getLinearVelocity().normalized();
-	vec3 dragForceVec = vec3(drag.x(), drag.y(), drag.z());
-		//body->velocity.Normalize();
-	dragForceVec.x *= -1;
-	dragForceVec.y *= -1;
-	dragForceVec.z *= -1;
-
 	return dragForceVec;
+	
 }
 
 // ---------------------------------------------------------
 update_status ModulePhysics3D::PreUpdate(float dt)
 {
-	/*vec3 dragF = ApplyAerodynamics(App->player->vehicle, dt);
-	btVector3 DragVec = btVector3();
-	DragVec.setValue(dragF.x, dragF.y, dragF.z);*/
-	//App->player->vehicle->body->applyCentralForce(DragVec);
+	vec3 dragF = ApplyAerodynamics(App->player->vehicle, dt);
+	btVector3 DragVec = btVector3(dragF.x, dragF.y, dragF.z); 
+	App->player->myDrag = DragVec;
+
+	App->player->vehicle->body->applyCentralForce(DragVec);
 
 	world->stepSimulation(dt, 15);
 
