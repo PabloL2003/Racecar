@@ -79,10 +79,11 @@ bool ModulePhysics3D::Start()
 btVector3 ModulePhysics3D::ApplyAerodynamics(PhysBody3D* body, float deltaTime)
 {
 	//The formula for aerodynamic drag is: Drag = 0.5 * airDensity * velocity^2 * dragCoefficient * area
-	//airDensity = 1.225 (at sea level and at 15 °C), and area = 1 for simplicity
-	
+	//airDensity = 1.225 (at sea level and at 15 ï¿½C), and area = 1 for simplicity
+
 	float dragCoefficient = 0.47f;
 	float airDensity = 1.225f;
+
 	float area = 2.0f;
 
 	
